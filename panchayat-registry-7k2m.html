@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Registry</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Poppins', sans-serif; overflow-x: hidden; }
+
+        .app-container {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0f766e 0%, #065f46 50%, #064e3b 100%);
+            position: relative;
+            overflow: hidden;
+            padding: 2rem;
+        }
+
+        .main-wrap {
+            max-width: 1100px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        .panel {
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(20px);
+            border-radius: 28px;
+            padding: 2.5rem;
+            box-shadow: 0 20px 80px rgba(0, 0, 0, 0.35);
+            border: 1px solid rgba(251, 191, 36, 0.25);
+            max-width: 480px;
+            margin: 0 auto;
+        }
+
+        .panel.wide {
+            max-width: 100%;
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            font-weight: 800;
+            color: #065f46;
+            text-align: center;
+            margin-bottom: 0.35rem;
+        }
+
+        .sub {
+            text-align: center;
+            color: #6b7280;
+            font-size: 0.95rem;
+            margin-bottom: 1.75rem;
+        }
+
+        .form-group { margin-bottom: 1.25rem; }
+        .input-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #065f46;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #d1d5db;
+            border-radius: 14px;
+            font-size: 1rem;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #fbbf24;
+            box-shadow: 0 0 0 4px rgba(251, 191, 36, 0.12);
+        }
+
+        .submit-button {
+            width: 100%;
+            padding: 1.1rem;
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            color: #065f46;
+            border: none;
+            border-radius: 14px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 0.5rem;
+        }
+
+        .submit-button:hover {
+            filter: brightness(1.03);
+        }
+
+        .error-message {
+            color: #ef4444;
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+        }
+
+        .hidden { display: none !important; }
+
+        .admin-header {
+            background: rgba(251, 191, 36, 0.18);
+            padding: 1.75rem;
+            border-radius: 18px;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .admin-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            font-weight: 800;
+            color: #047857;
+        }
+
+        .admin-subtitle {
+            color: #4b5563;
+            font-size: 1rem;
+            margin-top: 0.35rem;
+        }
+
+        .logout-btn {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 0.65rem 1.35rem;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 1rem;
+        }
+
+        .logout-btn:hover { background: #dc2626; }
+
+        .members-table-container {
+            overflow-x: auto;
+        }
+
+        .members-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 0.5rem;
+        }
+
+        .members-table th {
+            background: linear-gradient(135deg, #065f46, #047857);
+            color: white;
+            padding: 0.85rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .members-table td {
+            padding: 0.85rem;
+            border-bottom: 1px solid #e5e7eb;
+            color: #065f46;
+            font-size: 0.875rem;
+        }
+
+        .members-table tr:hover {
+            background: rgba(251, 191, 36, 0.08);
+        }
+
+        .no-members {
+            text-align: center;
+            padding: 2.5rem;
+            color: #6b7280;
+        }
+
+        .delete-btn {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 0.4rem 0.75rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .delete-btn:hover { background: #dc2626; }
+
+        @media (max-width: 768px) {
+            .panel { padding: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Private admin entry: not linked from the public registration page. Change the filename and ADMIN_PASSWORD below. -->
+    <div class="app-container">
+        <div class="main-wrap">
+            <div id="loginPanel" class="panel">
+                <h1>Registry access</h1>
+                <p class="sub">Mahendra Aarya Community</p>
+                <form id="adminLoginForm">
+                    <div class="form-group">
+                        <label class="input-label" for="adminPassword">Password</label>
+                        <input type="password" id="adminPassword" class="form-input" placeholder="Enter password" autocomplete="current-password" />
+                        <p class="error-message hidden" id="error-adminPassword"></p>
+                    </div>
+                    <button type="submit" class="submit-button">Sign in</button>
+                </form>
+            </div>
+
+            <div id="dashboardPanel" class="panel wide hidden">
+                <div class="admin-header">
+                    <h2 class="admin-title">Member registry</h2>
+                    <p class="admin-subtitle">All registered members (same data as the public form)</p>
+                    <button type="button" class="logout-btn" id="logoutBtn">Log out</button>
+                </div>
+                <div class="members-table-container">
+                    <div id="membersTableWrapper"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /* Change this password before use. The public panchayat.html page has no link here. */
+        const ADMIN_PASSWORD = 'admin123';
+
+        let members = JSON.parse(localStorage.getItem('panchayat-members') || '[]');
+        let isAdminLoggedIn = false;
+
+        const loginPanel = document.getElementById('loginPanel');
+        const dashboardPanel = document.getElementById('dashboardPanel');
+
+        document.getElementById('adminLoginForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const password = document.getElementById('adminPassword').value;
+            const errorElement = document.getElementById('error-adminPassword');
+
+            if (password === ADMIN_PASSWORD) {
+                isAdminLoggedIn = true;
+                document.getElementById('adminPassword').value = '';
+                errorElement.classList.add('hidden');
+                loginPanel.classList.add('hidden');
+                dashboardPanel.classList.remove('hidden');
+                renderMembersTable();
+            } else {
+                errorElement.textContent = 'Incorrect password.';
+                errorElement.classList.remove('hidden');
+            }
+        });
+
+        document.getElementById('logoutBtn').addEventListener('click', function () {
+            isAdminLoggedIn = false;
+            dashboardPanel.classList.add('hidden');
+            loginPanel.classList.remove('hidden');
+        });
+
+        function renderMembersTable() {
+            members = JSON.parse(localStorage.getItem('panchayat-members') || '[]');
+            const wrapper = document.getElementById('membersTableWrapper');
+
+            if (members.length === 0) {
+                wrapper.innerHTML = '<p class="no-members">No members registered yet.</p>';
+                return;
+            }
+
+            let tableHTML = `
+                <table class="members-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Phone</th>
+                            <th>Flat</th>
+                            <th>DOB</th>
+                            <th>Anniversary</th>
+                            <th>Registered</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            members.forEach((member, index) => {
+                const registeredDate = new Date(member.registeredDate).toLocaleDateString();
+                const dob = new Date(member.dob).toLocaleDateString();
+                const anniversary = member.anniversary ? new Date(member.anniversary).toLocaleDateString() : '—';
+
+                tableHTML += `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td><strong>${escapeHtml(member.memberName)}</strong></td>
+                        <td>${escapeHtml(member.phoneNumber)}</td>
+                        <td>${escapeHtml(member.flatNo)}</td>
+                        <td>${dob}</td>
+                        <td>${anniversary}</td>
+                        <td>${registeredDate}</td>
+                        <td>
+                            <button type="button" class="delete-btn" data-id="${member.id}">Delete</button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            tableHTML += '</tbody></table>';
+            wrapper.innerHTML = tableHTML;
+
+            wrapper.querySelectorAll('.delete-btn').forEach((btn) => {
+                btn.addEventListener('click', function () {
+                    const id = Number(this.getAttribute('data-id'));
+                    deleteMember(id);
+                });
+            });
+        }
+
+        function deleteMember(memberId) {
+            if (!confirm('Delete this member?')) return;
+            members = members.filter((m) => m.id !== memberId);
+            localStorage.setItem('panchayat-members', JSON.stringify(members));
+            renderMembersTable();
+        }
+
+        function escapeHtml(text) {
+            const d = document.createElement('div');
+            d.textContent = text;
+            return d.innerHTML;
+        }
+    </script>
+</body>
+</html>
